@@ -27,6 +27,18 @@ def build_graph(facility_dict_in, facility_dict_out):
     return G
 
 
+def dfs(G, sources):
+    ''' depth first search starting at each source facility
+    '''
+    acquisition_paths = []
+
+    for source in sources:
+        T = nx.dfs_tree(G, source=source)
+        acquisition_paths.extend(list(T.edges()))
+
+    return acquisition_paths
+
+
 def find_simple_paths(G, sources, sinks):
     ''' finds all simple paths between a given list of sources and targets
     '''
