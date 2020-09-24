@@ -1,8 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 from pprint import pprint
-import pygraphviz as pgv
-from pprint import pprint
 
 
 def draw_graph(G):
