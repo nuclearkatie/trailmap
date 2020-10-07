@@ -25,16 +25,19 @@ def draw_path(G, path):
 def print_graph_parameters(G, pathways):
     '''Prints a set of parameters characterizing the graph
     '''
-    print('\nGraph parameters')
+    print('\nGRAPH PARAMETERS')
 
-    print("A total of " + str(len(pathways)) + " pathways were generated")
+    num_paths = len(pathways)
+    print("A total of " + str(num_paths) + " pathways were generated")
 
-    (shortest_path, shortest_length,
-     longest_length) = get_shortest_and_longest_path(pathways)
-    print("The shortest pathway is " + str(shortest_path))
-    print("with length " + str(shortest_length))
+    (shortest_length, shortest) = get_shortest_path(pathways)
+    (longest_length, longest) = get_longest_path(pathways)
+
+    print("\nThe shortest pathway is length " + str(shortest_length))
+    print("pathways with this length are " + str(shortest))
 
     print("\nGraph depth is " + str(longest_length))
+    print("pathways with this length are " + str(longest))
 
     semiconnected = nx.is_semiconnected(G)
     print('\nIs the graph semiconnected? ' + str(semiconnected))
@@ -42,9 +45,9 @@ def print_graph_parameters(G, pathways):
         print("-->This is likely because you have multiple source facilities")
 
     hierarchy = nx.flow_hierarchy(G)
-    print("\nGraph hierarchy is " + str(hierarchy))
+    print("\nGraph hierarchy is " + "{:.3f}".format(hierarchy))
 
-    return
+    return num_paths, semiconnected, hierarchy
 
 
 def find_node_disjoint_paths(G, s, t):
@@ -69,55 +72,73 @@ def find_simple_cycles(G):
     return sc
 
 
-def find_facility_specific_paths(pathways, facility, location='any'):
-    '''finds pathways that include a given facility. Options: 'beginning',
-    'end', 'any' specify whether the facility should be the start, the end, or
-    anywhere in the path
+def find_paths_with_source(pathways, source):
+    '''returns a subset of pathways that contain a given facility as the source
     '''
-    subset_pathways = []
+    subset_pathways = set()
     for path in pathways:
-        if facility in path:
-            if location == 'start' and path[0] == facility:
-                subset_pathways.append(path)
-            elif location == 'end' and path[-1] == facility:
-                subset_pathways.append(path)
-            else:
-                subset_pathways.append(path)
+        if path[0] == source:
+            subset_pathways.add(path)
 
     return subset_pathways
 
 
-def find_paths_between_facilities(pathways, source, target):
-    subset_pathways = []
-    for path in (x for x in pathways if x[0] == source and x[-1] == target):
-        subset_pathways.append(path)
+def find_paths_with_sink(pathways, sink):
+    '''returns a subset of pathways that contain a given facility as the sink
+    '''
+    subset_pathways = set()
+    for path in pathways:
+        if path[-1] == sink:
+            subset_pathways.add(path)
 
     return subset_pathways
 
 
-def find_paths_containing_facilities(pathways, facilities, contains='any'):
-    p = []
-    if contains == 'any':
-        for path in pathways:
-            p.append([path for facility in facilities if facility in path])
-    if contains == 'all':
-        for path in pathways:
-            if set(facilities).issubset(path):
-                p.append(path)
+def find_paths_containing_all(pathways, facilities):
+    '''returns a subset of pathways that contain all facilities in input list
+    '''
+    p = set()
+    for path in pathways:
+        if set(facilities).issubset(path):
+            p.add(path)
 
     return p
 
 
-def get_shortest_and_longest_path(pathways):
+def find_paths_containing_one_of(pathways, facilities):
+    '''returns a subset of pathways that contain one or more facilities in
+    input list
+    '''
+    p = set()
+    for path in pathways:
+        p.add([path for facility in facilities if facility in path])
+
+    return p
+
+
+def get_shortest_path(pathways):
     '''finds the pathway with the shortest number of steps from source to
     target. Returns a tuple with path and length.
     '''
     if len(pathways) is not 0:
         shortest_length = min([len(path) for path in pathways])
-        shortest_path = min([path for path in pathways])
-        longest_length = max([len(path) for path in pathways])
+        shortest = [path for path in pathways if len(path) == shortest_length]
     else:
-        shortest_path = "No pathways found"
+        shortest = "No pathways found"
         shortest_length = 0
 
-    return shortest_path, shortest_length, longest_length
+    return shortest_length, shortest
+
+
+def get_longest_path(pathways):
+    '''finds the pathway with the longest number of steps from source to
+    target. Returns a tuple with path and length.
+    '''
+    if len(pathways) is not 0:
+        longest_length = max([len(path) for path in pathways])
+        longest = [path for path in pathways if len(path) == longest_length]
+    else:
+        longest = "No pathways found"
+        longest_length = 0
+
+    return longest_length, longest

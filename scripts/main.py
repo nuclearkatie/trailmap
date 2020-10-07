@@ -65,28 +65,6 @@ def main(args=None):
             plt.show()
         if ns.pickle:
             nx.write_gpickle(G, ns.picklefile)
-        if ns.facility_search is not None:
-            facility = str(ns.facility_search[0])
-            location = str(ns.facility_search[1])
-            print("\nPathways going through " + facility)
-            fs_pathways = pa.find_facility_specific_paths(pathways, facility,
-                                                          location)
-            pprint(fs_pathways)
-            if ns.facility_search[2] == 'draw':
-                for path in [path for path in fs_pathways if ns.draw]:
-                    pa.draw_path(G, path)
-        if ns.node_disjoint is not None:
-            source = str(ns.node_disjoint[0])
-            target = str(ns.node_disjoint[1])
-            print("\nNode Disjoint paths")
-            ndp = pa.find_node_disjoint_paths(G, source, target)
-            pprint(ndp)
-        if ns.connect_facilities is not None:
-            source = str(ns.connect_facilities[0])
-            target = str(ns.connect_facilities[1])
-            print('\nPathways between ' + source + ' and ' + target)
-            paths = pa.find_paths_between_facilities(pathways, source, target)
-            pprint(paths)
 
     else:
         print('No input file given!')
