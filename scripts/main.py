@@ -3,7 +3,7 @@ import networkx as nx
 import trailmap.parse_input as pi
 import trailmap.commodity_dictionary as cd
 import trailmap.acquisition_paths as ap
-import trailmap.pathway_analysis as pa
+# import trailmap.pathway_analysis as pa
 import networkx as nx
 from pprint import pprint
 import matplotlib.pyplot as plt
@@ -58,13 +58,13 @@ def main(args=None):
                                              commodity_dictionary)
         (G, pathways) = ap.conduct_apa(facility_dict_in,
                                        facility_dict_out)
-        pa.print_graph_parameters(G, pathways)
+        # pa.print_graph_parameters(G, pathways)
 
-        if ns.draw:
-            plt = pa.draw_graph(G)
-            plt.show()
-        if ns.pickle:
-            nx.write_gpickle(G, ns.picklefile)
+        # if ns.draw:
+        #     plt = pa.draw_graph(G)
+        #     plt.show()
+        # if ns.pickle:
+        #     nx.write_gpickle(G, ns.picklefile)
 
     else:
         print('No input file given!')
