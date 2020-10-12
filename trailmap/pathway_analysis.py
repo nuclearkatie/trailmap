@@ -61,8 +61,8 @@ def find_node_disjoint_paths(G, s, t):
 def find_maximum_flow(G, s, t):
     '''Requires edge attribute 'capacity'
     '''
-    max_flow_path = maximum_flow(G, s, t)
-    max_flow = maximum_flow_value(G, s, t)
+    max_flow_path = nx.maximum_flow(G, s, t)
+    max_flow = nx.maximum_flow_value(G, s, t)
     return max_flow_path, max_flow
 
 
